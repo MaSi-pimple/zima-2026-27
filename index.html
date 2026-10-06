@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zimní příprava 2026/27</title>
+<style>
+:root{--bg:#f2f2f7;--c:#fff;--t:#1c1c1e;--m:#8e8e93;--l:#e5e5ea;--bike:#0a84ff;--gym:#ff9f0a;--rest:#aeaeb2;--test:#30d158;--done:#e8e8ed}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--c:#1c1c1e;--t:#f2f2f7;--m:#98989d;--l:#38383a;--done:#111113}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:1180px;margin:0 auto;padding:16px}
+h1{font-size:30px;margin:8px 0 2px;letter-spacing:-.02em}
+.sub0{color:var(--m);margin:0 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--c);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.bar label{display:flex;gap:6px;align-items:center;color:var(--m);font-size:13px}
+input[type=number],input[type=date]{font:inherit;color:var(--t);background:var(--bg);border:0;border-radius:8px;padding:6px 8px;width:auto}
+input[type=number]{width:70px}
+button{font:inherit;border:0;border-radius:10px;padding:8px 14px;background:var(--bg);color:var(--bike);cursor:pointer}
+button.p{background:var(--bike);color:#fff}
+.prog{flex:1;min-width:140px;height:8px;background:var(--l);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--test);transition:width .3s}
+.wk{margin-top:22px}
+.wh{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 8px}
+.wh b{font-size:18px}.wh span{color:var(--m);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.cell{position:relative;background:var(--c);border-radius:16px;padding:10px 12px 12px;min-height:128px;cursor:pointer;border-top:4px solid var(--k,var(--rest));transition:transform .15s,opacity .2s}
+.cell:hover{transform:translateY(-2px)}
+.cell.bike{--k:var(--bike)}.cell.gym{--k:var(--gym)}.cell.test{--k:var(--test)}.cell.eval{--k:var(--test)}
+.cell.rest{min-height:0}
+.cell.today{outline:2px solid var(--bike)}
+.cell.done{background:var(--done);opacity:.55}
+.top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.top b{font-size:13px}.top span{color:var(--m);font-size:13px;flex:1}
+.top input{width:22px;height:22px;accent-color:var(--test);margin:0;cursor:pointer}
+.ttl{font-weight:600;font-size:15px}
+.sub{color:var(--m);font-size:13px;margin-top:2px}
+.cell.done .ttl{text-decoration:line-through;text-decoration-color:var(--m)}
+dialog{border:0;border-radius:22px;padding:22px;width:calc(100% - 24px);max-width:540px;background:var(--c);color:var(--t);max-height:88vh;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(6px)}
+dialog h2{margin:0 0 2px;font-size:22px}
+.m{color:var(--m);margin:0 0 10px}
+dialog ul{padding-left:20px;margin:8px 0 14px}dialog li{margin:5px 0}
+textarea{width:100%;min-height:70px;font:inherit;color:var(--t);background:var(--bg);border:0;border-radius:12px;padding:10px;resize:vertical}
+.bt{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.x{position:absolute;right:14px;top:14px;background:var(--bg);color:var(--m);padding:4px 10px;border-radius:50%}
+@media(max-width:760px){
+.grid{grid-template-columns:1fr;gap:8px}
+.cell,.cell.rest{min-height:0}
+dialog{margin:auto auto 0;width:100%;max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+h1{font-size:26px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><main>
+<h1>Zimní příprava 2026/27</h1>
+<p class="sub0">Týdny 1–6 stavba, týden 7 vyhodnocení a nastavení dalšího bloku.</p>
+<div class="bar">
+<label>FTP <input type="number" id="ftp" min="100" max="500"> W</label>
+<label>Start (pondělí) <input type="date" id="st"></label>
+<div class="prog"><i id="pg"></i></div><span id="pt" class="m" style="margin:0"></span>
+<button id="bk">Záloha</button><button id="rs">Obnovit</button><input type="file" id="fl" accept=".json" hidden>
+</div>
+<div id="cal"></div>
+</main>
+<dialog id="m"><button class="x" id="cl" aria-label="Zavřít">✕</button><div id="mb"></div></dialog>
+<script>
+const $=s=>document.querySelector(s),DN=['Po','Út','St','Čt','Pá','So','Ne'];
+let S={ftp:250,start:'2026-10-12',done:{},notes:{}};
+try{Object.assign(S,JSON.parse(localStorage.getItem('plan26')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('plan26',JSON.stringify(S))}catch(e){}};
+const W=n=>Math.round(S.ftp*n),pc=x=>Math.round(x*100),fm=s=>s%60?s+' s':s/60+' min';
+const fd=d=>d.getDate()+'. '+(d.getMonth()+1)+'.';
+const dateOf=(w,d)=>{const x=new Date(S.start+'T00:00');x.setDate(x.getDate()+w*7+d);return x};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const VO=[[2,115],[2,120],[3,115],[3,120],[3,120],[3,125]],SS=[[2,15,88],[2,20,88],[2,25,90],[3,20,90],[2,30,92],[3,20,92]],Z2=[90,105,120,135,150,150];
+const GYM={
+A:['Rozcvička: 5 min veslo + mobilita ramen','Tlak nad hlavu (osa / jednoručky) 4×5–6','Shyby 4×max (cíl 4×8, potom přidat zátěž)','Dipy 3×8–12','Veslování s jednoručkou 3×10 + face pulls 3×15','Boční zdvihy 3×12–15','Trup: ab wheel nebo dead bug 3×10, Pallof press 3×10 na stranu','Finisher: 10 min ski erg / veslo 30 s / 30 s'],
+B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Hip thrust 3×10','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, farmer\'s carry 4×30 m, boční plank 3×30 s','Finisher: sled nebo výpady s medicimbalem, krátce'],
+C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10 slamů s medicimbalem','10 výpadů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
+const gs={A:['Posilovna A','Horní polovina + trup'],B:['Posilovna B','Nohy + trup'],C:['Posilovna C','Hyrox okruh']};
+function txt(g){const t=g[0];
+return t=='w'?`Rozjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} % FTP (${W(g[2])}→${W(g[3])} W)`
+:t=='c'?`Vyjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} %`
+:t=='s'?`${fm(g[1])} @ ${pc(g[2])} % FTP (${W(g[2])} W)`
+:t=='f'?`${fm(g[1])} na maximum, rovnoměrně – FTP ≈ 95 % průměrného výkonu`
+:`${g[1]}× (${fm(g[2])} @ ${pc(g[4])} % [${W(g[4])} W] / ${fm(g[3])} @ ${pc(g[5])} % [${W(g[5])} W])`}
+function day(w,d){const L=w==6;
+if(d==3)return{k:'rest',t:'Volno',s:'Regenerace',st:['Žádný plánovaný trénink','Lehká mobilita 10–15 min, spánek, jídlo']};
+if(L&&d==6)return{k:'eval',t:'Vyhodnocení bloku',s:'Co dál?',st:['Zapiš výsledek FTP testu a nastav FTP nahoře na stránce','Porovnej váhy v posilovně (tlak, shyby, dřep) s prvním týdnem','Zhodnoť únavu, spánek a bolesti – co upravit','Rozhodni délku dalšího bloku (4–6 týdnů) a priority (VO2 / sweet spot / síla)','Watty ve všech trénincích se po změně FTP přepočítají samy']};
+if([0,4,6].includes(d)){const k={0:'A',4:'B',6:'C'}[d],g=gs[k];
+return{k:'gym',t:g[0],s:g[1],st:(L?['Odlehčený týden: o třetinu méně sérií, rezerva 2–3 opakování']:[]).concat(GYM[k])}}
+let seg,t,s,k='bike';
+if(d==1){if(L){seg=[['w',600,.45,.75],['i',3,60,180,1.1,.55],['c',600,.55,.4]];t='Otevírací intervaly';s='3× 1 min @ 110 %'}
+else{const[a,p]=VO[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.5]);seg.push(['i',10,40,20,p/100,.55])}seg.push(['c',600,.55,.4]);t='VO2 · 40/20';s=`${a}× (10× 40/20) @ ${p} %`}}
+if(d==2){if(L){seg=[['w',600,.45,.75],['i',3,60,60,1,.5],['s',300,.5],['f',1200],['c',600,.6,.4]];t='FTP test';s='20minutový test';k='test'}
+else{const[a,m,p]=SS[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.55]);seg.push(['s',m*60,p/100])}seg.push(['c',600,.55,.4]);t='Sweet spot';s=`${a}× ${m} min @ ${p} %`}}
+if(d==5){const m=L?60:Z2[w];seg=[['w',600,.45,.65],['s',(m-20)*60,L?.6:.68],['c',600,.65,.4]];t='Dlouhá Z2';s=`@ ~${W(L?.6:.68)} W`}
+const dur=Math.round(seg.reduce((a,g)=>a+(g[0]=='i'?g[1]*(g[2]+g[3]):g[1]),0)/60);
+return{k,t,s:s+' · '+dur+' min',st:seg.map(txt).concat(k=='test'?['Po testu: FTP = 95 % z průměru 20 min']:[]),seg,dur}}
+function render(){let h='',T=0,D=0;const now=new Date().toDateString();
+for(let w=0;w<7;w++){let wt=0,wd=0,c='';
+for(let d=0;d<7;d++){const x=day(w,d),id=w+'-'+d,dt=dateOf(w,d),r=x.k=='rest',dn=!!S.done[id];
+if(!r){wt++;if(dn)wd++}
+c+=`<div class="cell ${x.k}${dn?' done':''}${dt.toDateString()==now?' today':''}" data-w="${w}" data-d="${d}"><div class="top"><b>${DN[d]}</b><span>${fd(dt)}</span>${r?'':`<input type="checkbox" data-id="${id}" ${dn?'checked':''} aria-label="Hotovo">`}</div><div class="ttl">${x.t}</div><div class="sub">${x.s}</div></div>`}
+T+=wt;D+=wd;
+h+=`<section class="wk"><div class="wh"><b>Týden ${w+1} · ${w<6?'Stavba':'Vyhodnocení'}</b><span>${wd}/${wt} hotovo · od ${fd(dateOf(w,0))}</span></div><div class="grid">${c}</div></section>`}
+$('#cal').innerHTML=h;$('#pg').style.width=(100*D/T)+'%';$('#pt').textContent=D+' / '+T}
+function zwo(x){const e=x.seg.map(g=>{const t=g[0];return t=='w'?`<Warmup Duration="${g[1]}" PowerLow="${g[2]}" PowerHigh="${g[3]}"/>`:t=='c'?`<Cooldown Duration="${g[1]}" PowerLow="${g[2]}" PowerHigh="${g[3]}"/>`:t=='s'?`<SteadyState Duration="${g[1]}" Power="${g[2]}"/>`:t=='f'?`<FreeRide Duration="${g[1]}"/>`:`<IntervalsT Repeat="${g[1]}" OnDuration="${g[2]}" OffDuration="${g[3]}" OnPower="${g[4]}" OffPower="${g[5]}"/>`}).join('\n    ');
+return`<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>Zimni priprava</author>\n  <name>${x.t}</name>\n  <description>${x.s}</description>\n  <sportType>bike</sportType>\n  <tags/>\n  <workout>\n    ${e}\n  </workout>\n</workout_file>`}
+function dl(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click()}
+function open(w,d){const x=day(w,d),id=w+'-'+d,r=x.k=='rest';
+$('#mb').innerHTML=`<h2>${x.t}</h2><p class="m">${DN[d]} ${fd(dateOf(w,d))} · týden ${w+1}${x.dur?' · ≈ '+x.dur+' min':''}</p><ul>${x.st.map(i=>`<li>${i}</li>`).join('')}</ul>${r?'':`<textarea id="nt" placeholder="Poznámky: pocity, skutečné watty, tep…">${esc(S.notes[id]||'')}</textarea>`}<div class="bt">${x.seg?'<button id="zw">Export .zwo (MyWhoosh)</button>':''}${r?'':`<button class="p" id="dn">${S.done[id]?'Vrátit na nedokončené':'Hotovo'}</button>`}</div>`;
+const nt=$('#nt');if(nt)nt.oninput=()=>{S.notes[id]=nt.value;save()};
+if($('#zw'))$('#zw').onclick=()=>dl(`tyden${w+1}-${DN[d]}.zwo`,zwo(x),'application/xml');
+if($('#dn'))$('#dn').onclick=()=>{S.done[id]=!S.done[id];if(!S.done[id])delete S.done[id];save();render();$('#m').close()};
+$('#m').showModal()}
+$('#cal').onclick=e=>{const c=e.target.closest('.cell');if(!c)return;
+if(e.target.type=='checkbox'){const id=e.target.dataset.id;e.target.checked?S.done[id]=1:delete S.done[id];save();render();return}
+open(+c.dataset.w,+c.dataset.d)};
+$('#cl').onclick=()=>$('#m').close();
+$('#m').onclick=e=>{if(e.target.id=='m')$('#m').close()};
+$('#ftp').value=S.ftp;$('#st').value=S.start;
+$('#ftp').onchange=e=>{S.ftp=Math.max(100,+e.target.value||250);save();render()};
+$('#st').onchange=e=>{if(e.target.value){S.start=e.target.value;save();render()}};
+$('#bk').onclick=()=>dl('plan-zaloha.json',JSON.stringify(S),'application/json');
+$('#rs').onclick=()=>$('#fl').click();
+$('#fl').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(S,JSON.parse(t));save();$('#ftp').value=S.ftp;$('#st').value=S.start;render()}catch(x){alert('Soubor se nepodařilo načíst.')}})};
+render();const td=document.querySelector('.today');if(td)td.scrollIntoView({block:'center'});
+</script></body></html>
