@@ -69,10 +69,10 @@ const W=n=>Math.round(S.ftp*n),pc=x=>Math.round(x*100),fm=s=>s%60?s+' s':s/60+' 
 const fd=d=>d.getDate()+'. '+(d.getMonth()+1)+'.';
 const dateOf=(w,d)=>{const x=new Date(S.start+'T00:00');x.setDate(x.getDate()+w*7+d);return x};
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-const VO=[[2,115],[2,120],[3,115],[3,120],[3,120],[3,125]],SS=[[2,15,88],[2,20,88],[2,25,90],[3,20,90],[2,30,92],[3,20,92]],Z2=[90,105,120,135,150,150];
+const VO=[[2,115],[2,120],[3,115],[3,120],[3,120],[3,125]],SS=[[2,15,88],[2,20,88],[2,25,90],[2,30,90],[3,15,92],[2,30,92]],Z2=[60,65,70,75,80,80];
 const GYM={
 A:['Rozcvička: 5 min veslo + mobilita ramen','Tlak nad hlavu (osa / jednoručky) 4×5–6','Shyby 4×max (cíl 4×8, potom přidat zátěž)','Dipy 3×8–12','Veslování s jednoručkou 3×10 + face pulls 3×15','Boční zdvihy 3×12–15','Trup: ab wheel nebo dead bug 3×10, Pallof press 3×10 na stranu','Finisher: 10 min ski erg / veslo 30 s / 30 s'],
-B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Hip thrust 3×10','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, farmer\'s carry 4×30 m, boční plank 3×30 s','Finisher: sled nebo výpady s medicimbalem, krátce'],
+B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Hyperextenze 45° 3×12 (hýždě, hamstringy, spodní záda)','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, dead bug 3×10, boční plank 3×30 s','Finisher: sled nebo výpady s medicimbalem, krátce'],
 C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10 slamů s medicimbalem','10 výpadů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
 const gs={A:['Posilovna A','Horní polovina + trup'],B:['Posilovna B','Nohy + trup'],C:['Posilovna C','Hyrox okruh']};
 function txt(g){const t=g[0];
@@ -90,8 +90,8 @@ let seg,t,s,k='bike';
 if(d==1){if(L){seg=[['w',600,.45,.75],['i',3,60,180,1.1,.55],['c',600,.55,.4]];t='Otevírací intervaly';s='3× 1 min @ 110 %'}
 else{const[a,p]=VO[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.5]);seg.push(['i',10,40,20,p/100,.55])}seg.push(['c',600,.55,.4]);t='VO2 · 40/20';s=`${a}× (10× 40/20) @ ${p} %`}}
 if(d==2){if(L){seg=[['w',600,.45,.75],['i',3,60,60,1,.5],['s',300,.5],['f',1200],['c',600,.6,.4]];t='FTP test';s='20minutový test';k='test'}
-else{const[a,m,p]=SS[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.55]);seg.push(['s',m*60,p/100])}seg.push(['c',600,.55,.4]);t='Sweet spot';s=`${a}× ${m} min @ ${p} %`}}
-if(d==5){const m=L?60:Z2[w];seg=[['w',600,.45,.65],['s',(m-20)*60,L?.6:.68],['c',600,.65,.4]];t='Dlouhá Z2';s=`@ ~${W(L?.6:.68)} W`}
+else{const[a,m,p]=SS[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.55]);seg.push(['s',m*60,p/100])}seg.push(['c',300,.55,.4]);t='Sweet spot';s=`${a}× ${m} min @ ${p} %`}}
+if(d==5){const m=L?45:Z2[w];seg=[['w',600,.45,.65],['s',(m-20)*60,L?.6:.68],['c',600,.65,.4]];t='Z2 vytrvalost';s=`@ ~${W(L?.6:.68)} W`}
 const dur=Math.round(seg.reduce((a,g)=>a+(g[0]=='i'?g[1]*(g[2]+g[3]):g[1]),0)/60);
 return{k,t,s:s+' · '+dur+' min',st:seg.map(txt).concat(k=='test'?['Po testu: FTP = 95 % z průměru 20 min']:[]),seg,dur}}
 function render(){let h='',T=0,D=0;const now=new Date().toDateString();
