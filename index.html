@@ -47,22 +47,30 @@ textarea{width:100%;min-height:70px;font:inherit;color:var(--t);background:var(-
 .cell,.cell.rest{min-height:0}
 dialog{margin:auto auto 0;width:100%;max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
 h1{font-size:26px}}
+
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.card{background:var(--c);border-radius:16px;padding:14px}.card h3{margin:0 0 6px;font-size:16px}.card p{margin:6px 0 0;font-size:12px}
+.gr{stroke:var(--l)}.ax{fill:var(--m);font-size:11px}
+.lg span{display:inline-block;margin-right:10px;font-size:12px}.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+@media(max-width:760px){.cg{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body><main>
 <h1>Zimní příprava 2026/27</h1>
 <p class="sub0">Týdny 1–6 stavba, týden 7 vyhodnocení a nastavení dalšího bloku.</p>
 <div class="bar">
 <label>FTP <input type="number" id="ftp" min="100" max="500"> W</label>
+<label>Fitness start <input type="number" id="c0" min="0" max="150"></label>
 <label>Start (pondělí) <input type="date" id="st"></label>
 <div class="prog"><i id="pg"></i></div><span id="pt" class="m" style="margin:0"></span>
 <button id="bk">Záloha</button><button id="rs">Obnovit</button><input type="file" id="fl" accept=".json" hidden>
 </div>
+<div id="ch" class="cg"></div>
 <div id="cal"></div>
 </main>
 <dialog id="m"><button class="x" id="cl" aria-label="Zavřít">✕</button><div id="mb"></div></dialog>
 <script>
 const $=s=>document.querySelector(s),DN=['Po','Út','St','Čt','Pá','So','Ne'];
-let S={ftp:250,start:'2026-10-12',done:{},notes:{}};
+let S={c0:30,ftp:250,start:'2026-10-12',done:{},notes:{}};
 try{Object.assign(S,JSON.parse(localStorage.getItem('plan26')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('plan26',JSON.stringify(S))}catch(e){}};
 const W=n=>Math.round(S.ftp*n),pc=x=>Math.round(x*100),fm=s=>s%60?s+' s':s/60+' min';
@@ -71,9 +79,9 @@ const dateOf=(w,d)=>{const x=new Date(S.start+'T00:00');x.setDate(x.getDate()+w*
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const VO=[[2,115],[2,120],[3,115],[3,120],[3,120],[3,125]],SS=[[2,15,88],[2,20,88],[2,25,90],[2,30,90],[3,15,92],[2,30,92]],Z2=[60,65,70,75,80,80];
 const GYM={
-A:['Rozcvička: 5 min veslo + mobilita ramen','Tlak nad hlavu (osa / jednoručky) 4×5–6','Shyby 4×max (cíl 4×8, potom přidat zátěž)','Dipy 3×8–12','Veslování s jednoručkou 3×10 + face pulls 3×15','Boční zdvihy 3×12–15','Trup: ab wheel nebo dead bug 3×10, Pallof press 3×10 na stranu','Finisher: 10 min ski erg / veslo 30 s / 30 s'],
-B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Hyperextenze 45° 3×12 (hýždě, hamstringy, spodní záda)','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, dead bug 3×10, boční plank 3×30 s','Finisher: sled nebo výpady s medicimbalem, krátce'],
-C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10 slamů s medicimbalem','10 výpadů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
+A:['Rozcvička: 5 min veslo + mobilita ramen','Tlak nad hlavu (osa / jednoručky) 4×5–6','Shyby 4×max (cíl 4×8, potom přidat zátěž)','Dipy 3×8–12','Veslování na stroji s hrudní podporou 3×10','Face pulls 3×15 (samostatně, až po veslování)','Boční zdvihy 3×12–15','Trup: dead bug 3×10, kabelový crunch 3×12, Pallof press 3×10 na stranu','Okruh na trup: jedna série od každého cviku za sebou, 20–30 s pauza mezi cviky, 60–90 s po celém kole, celkem 3 kola','Finisher: 10 min na ski ergu, střídej 30 s rychle / 30 s lehce (10 kol)'],
+B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Step-up na bednu 3×8 na stranu (hýždě, stehna)','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, dead bug 3×10, boční plank 3×30 s','Okruh na trup: jedna série od každého cviku za sebou, 20–30 s pauza mezi cviky, 60–90 s po celém kole, celkem 3 kola','Finisher: dřep a hod medicimbalu do výšky 3×8 (výbušně, lehčí míč)'],
+C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10× dřep a hod medicimbalu do výšky','10 goblet dřepů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
 const gs={A:['Posilovna A','Horní polovina + trup'],B:['Posilovna B','Nohy + trup'],C:['Posilovna C','Hyrox okruh']};
 function txt(g){const t=g[0];
 return t=='w'?`Rozjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} % FTP (${W(g[2])}→${W(g[3])} W)`
@@ -82,10 +90,10 @@ return t=='w'?`Rozjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} % FTP (${W(g[2])}
 :t=='f'?`${fm(g[1])} na maximum, rovnoměrně – FTP ≈ 95 % průměrného výkonu`
 :`${g[1]}× (${fm(g[2])} @ ${pc(g[4])} % [${W(g[4])} W] / ${fm(g[3])} @ ${pc(g[5])} % [${W(g[5])} W])`}
 function day(w,d){const L=w==6;
-if(d==3)return{k:'rest',t:'Volno',s:'Regenerace',st:['Žádný plánovaný trénink','Lehká mobilita 10–15 min, spánek, jídlo']};
-if(L&&d==6)return{k:'eval',t:'Vyhodnocení bloku',s:'Co dál?',st:['Zapiš výsledek FTP testu a nastav FTP nahoře na stránce','Porovnej váhy v posilovně (tlak, shyby, dřep) s prvním týdnem','Zhodnoť únavu, spánek a bolesti – co upravit','Rozhodni délku dalšího bloku (4–6 týdnů) a priority (VO2 / sweet spot / síla)','Watty ve všech trénincích se po změně FTP přepočítají samy']};
+if(d==3)return{k:'rest',t:'Volno',s:'Regenerace',st:['Žádný plánovaný trénink','Lehká mobilita 10–15 min, spánek, jídlo'],tss:0};
+if(L&&d==6)return{k:'eval',t:'Vyhodnocení bloku',s:'Co dál?',tss:0,st:['Zapiš výsledek FTP testu a nastav FTP nahoře na stránce','Porovnej váhy v posilovně (tlak, shyby, dřep) s prvním týdnem','Zhodnoť únavu, spánek a bolesti – co upravit','Rozhodni délku dalšího bloku (4–6 týdnů) a priority (VO2 / sweet spot / síla)','Watty ve všech trénincích se po změně FTP přepočítají samy']};
 if([0,4,6].includes(d)){const k={0:'A',4:'B',6:'C'}[d],g=gs[k];
-return{k:'gym',t:g[0],s:g[1],st:(L?['Odlehčený týden: o třetinu méně sérií, rezerva 2–3 opakování']:[]).concat(GYM[k])}}
+return{k:'gym',tss:Math.round({A:40,B:50,C:45}[k]*(L?.7:1)),t:g[0],s:g[1],st:(L?['Odlehčený týden: o třetinu méně sérií, rezerva 2–3 opakování']:[]).concat(GYM[k])}}
 let seg,t,s,k='bike';
 if(d==1){if(L){seg=[['w',600,.45,.75],['i',3,60,180,1.1,.55],['c',600,.55,.4]];t='Otevírací intervaly';s='3× 1 min @ 110 %'}
 else{const[a,p]=VO[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.5]);seg.push(['i',10,40,20,p/100,.55])}seg.push(['c',600,.55,.4]);t='VO2 · 40/20';s=`${a}× (10× 40/20) @ ${p} %`}}
@@ -93,7 +101,8 @@ if(d==2){if(L){seg=[['w',600,.45,.75],['i',3,60,60,1,.5],['s',300,.5],['f',1200]
 else{const[a,m,p]=SS[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.55]);seg.push(['s',m*60,p/100])}seg.push(['c',300,.55,.4]);t='Sweet spot';s=`${a}× ${m} min @ ${p} %`}}
 if(d==5){const m=L?45:Z2[w];seg=[['w',600,.45,.65],['s',(m-20)*60,L?.6:.68],['c',600,.65,.4]];t='Z2 vytrvalost';s=`@ ~${W(L?.6:.68)} W`}
 const dur=Math.round(seg.reduce((a,g)=>a+(g[0]=='i'?g[1]*(g[2]+g[3]):g[1]),0)/60);
-return{k,t,s:s+' · '+dur+' min',st:seg.map(txt).concat(k=='test'?['Po testu: FTP = 95 % z průměru 20 min']:[]),seg,dur}}
+const q=x=>x*x,tss=Math.round(100*seg.reduce((a,g)=>{const t=g[0];return a+(t=='i'?g[1]*(g[2]*q(g[4])+g[3]*q(g[5]))/3600:t=='s'?g[1]*q(g[2])/3600:t=='f'?g[1]/3600:g[1]*(q(g[2])+g[2]*g[3]+q(g[3]))/10800)},0));
+return{k,tss,t,s:s+' · '+dur+' min',st:seg.map(txt).concat(k=='test'?['Po testu: FTP = 95 % z průměru 20 min']:[]),seg,dur}}
 function render(){let h='',T=0,D=0;const now=new Date().toDateString();
 for(let w=0;w<7;w++){let wt=0,wd=0,c='';
 for(let d=0;d<7;d++){const x=day(w,d),id=w+'-'+d,dt=dateOf(w,d),r=x.k=='rest',dn=!!S.done[id];
@@ -101,7 +110,7 @@ if(!r){wt++;if(dn)wd++}
 c+=`<div class="cell ${x.k}${dn?' done':''}${dt.toDateString()==now?' today':''}" data-w="${w}" data-d="${d}"><div class="top"><b>${DN[d]}</b><span>${fd(dt)}</span>${r?'':`<input type="checkbox" data-id="${id}" ${dn?'checked':''} aria-label="Hotovo">`}</div><div class="ttl">${x.t}</div><div class="sub">${x.s}</div></div>`}
 T+=wt;D+=wd;
 h+=`<section class="wk"><div class="wh"><b>Týden ${w+1} · ${w<6?'Stavba':'Vyhodnocení'}</b><span>${wd}/${wt} hotovo · od ${fd(dateOf(w,0))}</span></div><div class="grid">${c}</div></section>`}
-$('#cal').innerHTML=h;$('#pg').style.width=(100*D/T)+'%';$('#pt').textContent=D+' / '+T}
+$('#cal').innerHTML=h;$('#pg').style.width=(100*D/T)+'%';$('#pt').textContent=D+' / '+T;charts()}
 function zwo(x){const e=x.seg.map(g=>{const t=g[0];return t=='w'?`<Warmup Duration="${g[1]}" PowerLow="${g[2]}" PowerHigh="${g[3]}"/>`:t=='c'?`<Cooldown Duration="${g[1]}" PowerLow="${g[2]}" PowerHigh="${g[3]}"/>`:t=='s'?`<SteadyState Duration="${g[1]}" Power="${g[2]}"/>`:t=='f'?`<FreeRide Duration="${g[1]}"/>`:`<IntervalsT Repeat="${g[1]}" OnDuration="${g[2]}" OffDuration="${g[3]}" OnPower="${g[4]}" OffPower="${g[5]}"/>`}).join('\n    ');
 return`<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>Zimni priprava</author>\n  <name>${x.t}</name>\n  <description>${x.s}</description>\n  <sportType>bike</sportType>\n  <tags/>\n  <workout>\n    ${e}\n  </workout>\n</workout_file>`}
 function dl(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click()}
@@ -116,11 +125,37 @@ if(e.target.type=='checkbox'){const id=e.target.dataset.id;e.target.checked?S.do
 open(+c.dataset.w,+c.dataset.d)};
 $('#cl').onclick=()=>$('#m').close();
 $('#m').onclick=e=>{if(e.target.id=='m')$('#m').close()};
+$('#c0').value=S.c0;$('#c0').onchange=e=>{S.c0=+e.target.value||0;save();render()};
 $('#ftp').value=S.ftp;$('#st').value=S.start;
 $('#ftp').onchange=e=>{S.ftp=Math.max(100,+e.target.value||250);save();render()};
 $('#st').onchange=e=>{if(e.target.value){S.start=e.target.value;save();render()}};
 $('#bk').onclick=()=>dl('plan-zaloha.json',JSON.stringify(S),'application/json');
 $('#rs').onclick=()=>$('#fl').click();
 $('#fl').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(S,JSON.parse(t));save();$('#ftp').value=S.ftp;$('#st').value=S.start;render()}catch(x){alert('Soubor se nepodařilo načíst.')}})};
+
+function chF(P){const W=600,H=220,L=38,R=14,T=14,B=26,n=P.length,mn=Math.floor(Math.min(...P.map(p=>p[1]))-3),mx=Math.ceil(Math.max(...P.map(p=>p[2]))+3);
+const sx=i=>L+(W-L-R)*i/(n-1),sy=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));let g='';
+for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4;g+=`<line class="gr" x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}"/><text class="ax" x="${L-6}" y="${sy(v)+4}" text-anchor="end">${Math.round(v)}</text>`}
+const xs=P.map((p,i)=>`<text class="ax" x="${sx(i)}" y="${H-8}" text-anchor="middle">${i?'T'+i:'start'}</text>`).join(''),
+up=P.map((p,i)=>sx(i)+','+sy(p[2])).join(' '),dn=P.map((p,i)=>sx(n-1-i)+','+sy(P[n-1-i][1])).join(' '),ln=P.map((p,i)=>sx(i)+','+sy(p[0])).join(' '),
+dots=P.map((p,i)=>`<circle cx="${sx(i)}" cy="${sy(p[0])}" r="4" fill="#0a84ff"><title>${i?'Po týdnu '+i:'Start'}: ${Math.round(p[0])} W (${Math.round(p[1])}–${Math.round(p[2])})</title></circle>`).join('');
+return`<svg viewBox="0 0 ${W} ${H}" width="100%">${g}${xs}<polygon points="${up} ${dn}" fill="#0a84ff" opacity=".15"/><polyline points="${ln}" fill="none" stroke="#0a84ff" stroke-width="2.5"/>${dots}</svg>`}
+function chT(D,tI){const W=600,H=220,L=38,R=14,T=14,B=26,N=D.length,vs=D.flatMap(p=>[p.c,p.a,p.f]),mn=Math.floor(Math.min(...vs)-4),mx=Math.ceil(Math.max(...vs)+4);
+const sx=i=>L+(W-L-R)*i/(N-1),sy=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn)),pts=(k,a,b)=>{let r='';for(let i=a;i<=b;i++)r+=sx(i).toFixed(1)+','+sy(D[i][k]).toFixed(1)+' ';return r};
+const ln=(k,col)=>(tI>=1?`<polyline points="${pts(k,0,Math.min(tI,N-1))}" fill="none" stroke="${col}" stroke-width="2"/>`:'')+(tI<N-1?`<polyline points="${pts(k,Math.max(tI,0),N-1)}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="4 4"/>`:'');
+let g='';for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4;g+=`<line class="gr" x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}"/><text class="ax" x="${L-6}" y="${sy(v)+4}" text-anchor="end">${Math.round(v)}</text>`}
+if(mn<0)g+=`<line x1="${L}" x2="${W-R}" y1="${sy(0)}" y2="${sy(0)}" stroke="var(--m)" stroke-width="1"/>`;
+for(let w=0;w<7;w++)g+=`<text class="ax" x="${sx(w*7+3)}" y="${H-8}" text-anchor="middle">T${w+1}</text>`;
+const tx=tI>=0&&tI<N?`<line x1="${sx(tI)}" x2="${sx(tI)}" y1="${T}" y2="${H-B}" stroke="var(--m)" stroke-dasharray="2 3"/>`:'';
+return`<svg viewBox="0 0 ${W} ${H}" width="100%">${g}${tx}<polygon points="${pts('c',0,N-1)}${sx(N-1)},${sy(mn)} ${sx(0)},${sy(mn)}" fill="#0a84ff" opacity=".12"/>${ln('c','#0a84ff')}${ln('a','#ff2d92')}${ln('f','#ff9f0a')}</svg>`}
+function charts(){const now=new Date();now.setHours(0,0,0,0);
+const gn=[1,1,.9,.8,.7,.5,.3];let c=S.ftp,lo=S.ftp,hi=S.ftp;const P=[[c,lo,hi]];
+for(let w=0;w<7;w++){let f=1;if(dateOf(w,6)<now){let n=0,b=0;for(let d=0;d<7;d++)if(day(w,d).seg){b++;if(S.done[w+'-'+d])n++}f=b?n/b:1}
+const r=gn[w]*f/100;c*=1+r;lo*=1+r*.5;hi*=1+r*1.4;P.push([c,lo,hi])}
+const st=new Date(S.start+'T00:00'),tI=Math.min(48,Math.floor((now-st)/864e5));let ct=S.c0,at=S.c0;const D=[];
+for(let i=0;i<49;i++){const w=Math.floor(i/7),d=i%7,x=day(w,d),tl=(i>tI||S.done[w+'-'+d])?x.tss:0;ct+=(tl-ct)/42;at+=(tl-at)/7;D.push({c:ct,a:at,f:ct-at})}
+const u=D[Math.max(0,Math.min(tI,48))],e=P[7];
+$('#ch').innerHTML=`<div class="card"><h3>Predikce FTP</h3>${chF(P)}<p class="m">Po 7. týdnu odhad ~${Math.round(e[0])} W (rozptyl ${Math.round(e[1])}–${Math.round(e[2])} W) z FTP ${S.ftp} W. Orientační model: přírůstek klesá s časem a u uplynulých týdnů se násobí podílem splněných jízd na kole. Skutečnost ověří test v 7. týdnu.</p></div>
+<div class="card"><h3>Fitness a únava</h3>${chT(D,tI)}<div class="lg"><span><i style="background:#0a84ff"></i>Fitness ${Math.round(u.c)}</span><span><i style="background:#ff2d92"></i>Únava ${Math.round(u.a)}</span><span><i style="background:#ff9f0a"></i>Forma ${Math.round(u.f)}</span></div><p class="m">Plná čára = odškrtnuté tréninky, přerušovaná = plán. Zátěž (TSS) se počítá z plánu, nedokončený trénink se bere jako 0. Fitness startuje na ${S.c0}.</p></div>`}
 render();const td=document.querySelector('.today');if(td)td.scrollIntoView({block:'center'});
 </script></body></html>
