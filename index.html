@@ -90,6 +90,9 @@ A:[['Rozcvička','5 min veslo + mobilita ramen'],['Tlak nad hlavu (jednoručky)'
 B:[['Rozcvička','5 min veslo, aktivace hýždí'],['Dřep s osou','4×5',1],['A1 · Rumunský mrtvý tah','3×8',1],['A2 · Výpady bez zátěže (superset s A1)','3×8 / strana'],['Leg curl (hamstringy)','3×12',1],['Lýtka','3×12',1],['#Trup'],['Dead bug','3×10'],['Boční plank','3×30 s'],['Woodchop na kladce','3×10 / strana',1],['#Finisher'],['Dřep a hod medicimbalu do výšky','3×8 (lehčí míč)',1]],
 C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10× dřep a hod medicimbalu do výšky','10 goblet dřepů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
 GYM.Bh=GYM.B.flatMap(r=>r[0]=='Dřep s osou'?[['Hex rack deadlift (s popruhy)','4×5',1]]:r[0].startsWith('A1')?[]:r[0].startsWith('A2')?[['Výpady bez zátěže','3×8 / strana']]:[r]);
+const NID={'Tlak nad hlavu (jednoručky)':'ohp','Shyby (přídavná zátěž)':'pullup','Dipy (přídavná zátěž)':'dip','Veslování na stroji s hrudní podporou':'row','Face pulls':'facepull','Boční zdvihy':'lateral','Pallof press':'pallof','Dřep s osou':'squat','A1 · Rumunský mrtvý tah':'rdl','Leg curl (hamstringy)':'legcurl','Lýtka':'calf','Woodchop na kladce':'woodchop','Hex rack deadlift (s popruhy)':'hex','Dřep a hod medicimbalu do výšky':'medsquat'};
+const key=r=>NID[r[0]]||r[0];
+for(const n in NID)if(S.w[n]!==undefined&&S.w[NID[n]]===undefined){S.w[NID[n]]=S.w[n];delete S.w[n]}
 const gs={A:['Posilovna A','Horní polovina + trup'],B:['Posilovna B','Nohy + trup'],C:['Posilovna C','Hyrox okruh']};
 function txt(g){const t=g[0];
 return t=='w'?`Rozjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} % FTP (${W(g[2])}→${W(g[3])} W)`
@@ -159,8 +162,8 @@ return`<svg viewBox="0 0 ${W} ${H}" width="100%">${g}${tx}<polygon points="${pts
 
 const ea=v=>esc(String(v)).replace(/"/g,'&quot;');
 const wi=n=>`<input type="number" inputmode="decimal" step="0.5" min="0" data-k="${ea(n)}" value="${ea(S.w[n]??'')}" placeholder="kg">`;
-function tbl(R){return`<table class="gt"><tr><th>Cvik</th><th>Série × opak.</th><th>Kg</th></tr>`+R.map(r=>r[0][0]=='#'?`<tr class="sec"><td colspan="3">${r[0].slice(1)}</td></tr>`:`<tr><td>${r[0]}</td><td>${r[1]||''}</td><td>${r[2]?wi(r[0]):''}</td></tr>`).join('')+'</table>'}
-function buildW(){$('#wp').innerHTML='<h3>Pracovní váhy (kg)</h3>'+['A','B'].map(k=>`<h4>Posilovna ${k}</h4><div class="wg">`+(k=='B'?GYM.B.concat(GYM.Bh.filter(r=>r[2]&&!GYM.B.some(q=>q[0]==r[0]))):GYM[k]).filter(r=>r[2]).map(r=>`<label>${r[0]}${wi(r[0])}</label>`).join('')+'</div>').join('')+'<p class="m">Váhy se propíšou do všech tréninků Posilovna A a B.</p>'}
+function tbl(R){return`<table class="gt"><tr><th>Cvik</th><th>Série × opak.</th><th>Kg</th></tr>`+R.map(r=>r[0][0]=='#'?`<tr class="sec"><td colspan="3">${r[0].slice(1)}</td></tr>`:`<tr><td>${r[0]}</td><td>${r[1]||''}</td><td>${r[2]?wi(key(r)):''}</td></tr>`).join('')+'</table>'}
+function buildW(){$('#wp').innerHTML='<h3>Pracovní váhy (kg)</h3>'+['A','B'].map(k=>`<h4>Posilovna ${k}</h4><div class="wg">`+(k=='B'?GYM.B.concat(GYM.Bh.filter(r=>r[2]&&!GYM.B.some(q=>q[0]==r[0]))):GYM[k]).filter(r=>r[2]).map(r=>`<label>${r[0]}${wi(key(r))}</label>`).join('')+'</div>').join('')+'<p class="m">Váhy se propíšou do všech tréninků Posilovna A a B.</p>'}
 function setW(e){const k=e.target.dataset&&e.target.dataset.k;if(k==null)return;S.w[k]=e.target.value;save();document.querySelectorAll('input[data-k]').forEach(i=>{if(i!==e.target&&i.dataset.k===k)i.value=e.target.value})}
 $('#wp').addEventListener('input',setW);$('#mb').addEventListener('input',setW);
 function charts(){const now=new Date();now.setHours(0,0,0,0);
