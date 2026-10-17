@@ -53,6 +53,12 @@ h1{font-size:26px}}
 .gr{stroke:var(--l)}.ax{fill:var(--m);font-size:11px}
 .lg span{display:inline-block;margin-right:10px;font-size:12px}.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
 @media(max-width:760px){.cg{grid-template-columns:1fr}}
+
+.gt{width:100%;border-collapse:collapse;font-size:14px}.gt th{text-align:left;color:var(--m);font-weight:500;font-size:12px;padding:4px 6px;border-bottom:1px solid var(--l)}
+.gt td{padding:7px 6px;border-bottom:1px solid var(--l);vertical-align:middle}.gt td:nth-child(2){color:var(--m);white-space:nowrap}.gt th:last-child,.gt td:last-child{text-align:right;width:78px}
+.gt .sec td{font-weight:600;color:var(--m);font-size:11px;text-transform:uppercase;padding-top:14px;border:0}.gt input{width:64px;text-align:right}
+.wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0 18px}.wg label{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--l)}
+.card h4{margin:12px 0 2px;font-size:12px;color:var(--m);text-transform:uppercase}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body><main>
 <h1>Zimní příprava 2026/27</h1>
@@ -65,12 +71,13 @@ h1{font-size:26px}}
 <button id="bk">Záloha</button><button id="rs">Obnovit</button><input type="file" id="fl" accept=".json" hidden>
 </div>
 <div id="ch" class="cg"></div>
+<div id="wp" class="card" style="margin-top:12px"></div>
 <div id="cal"></div>
 </main>
 <dialog id="m"><button class="x" id="cl" aria-label="Zavřít">✕</button><div id="mb"></div></dialog>
 <script>
 const $=s=>document.querySelector(s),DN=['Po','Út','St','Čt','Pá','So','Ne'];
-let S={c0:30,ftp:250,start:'2026-10-12',done:{},notes:{}};
+let S={w:{},c0:30,ftp:250,start:'2026-10-12',done:{},notes:{}};
 try{Object.assign(S,JSON.parse(localStorage.getItem('plan26')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('plan26',JSON.stringify(S))}catch(e){}};
 const W=n=>Math.round(S.ftp*n),pc=x=>Math.round(x*100),fm=s=>s%60?s+' s':s/60+' min';
@@ -79,9 +86,10 @@ const dateOf=(w,d)=>{const x=new Date(S.start+'T00:00');x.setDate(x.getDate()+w*
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const VO=[[2,115],[2,120],[3,115],[3,120],[3,120],[3,125]],SS=[[2,15,88],[2,20,88],[2,25,90],[2,30,90],[3,15,92],[2,30,92]],Z2=[60,65,70,75,80,80];
 const GYM={
-A:['Rozcvička: 5 min veslo + mobilita ramen','Tlak nad hlavu (osa / jednoručky) 4×5–6','Shyby 4×max (cíl 4×8, potom přidat zátěž)','Dipy 3×8–12','Veslování na stroji s hrudní podporou 3×10','Face pulls 3×15 (samostatně, až po veslování)','Boční zdvihy 3×12–15','Trup: dead bug 3×10, kabelový crunch 3×12, Pallof press 3×10 na stranu','Okruh na trup: jedna série od každého cviku za sebou, 20–30 s pauza mezi cviky, 60–90 s po celém kole, celkem 3 kola','Finisher: 10 min na ski ergu, střídej 30 s rychle / 30 s lehce (10 kol)'],
-B:['Rozcvička: 5 min veslo, aktivace hýždí','Dřep s osou nebo hex rack deadlift 4×5','Rumunský mrtvý tah nebo výpady 3×8 na stranu','Step-up na bednu 3×8 na stranu (hýždě, stehna)','Hamstringy + lýtka 3×12','Trup: visy se zvedáním kolen 3×10, dead bug 3×10, boční plank 3×30 s','Okruh na trup: jedna série od každého cviku za sebou, 20–30 s pauza mezi cviky, 60–90 s po celém kole, celkem 3 kola','Finisher: dřep a hod medicimbalu do výšky 3×8 (výbušně, lehčí míč)'],
+A:[['Rozcvička','5 min veslo + mobilita ramen'],['Tlak nad hlavu (jednoručky)','4×5–6',1],['Shyby (přídavná zátěž)','4×max',1],['Dipy (přídavná zátěž)','3×8–12',1],['Veslování na stroji s hrudní podporou','3×10',1],['Face pulls','3×15',1],['Boční zdvihy','3×12–15',1],['#Trup'],['Dead bug','3×10'],['Pallof press','3×10 / strana',1],['Hollow body hold','3×20–30 s'],['#Finisher'],['Ski erg: 30 s rychle / 30 s lehce','10 kol']],
+B:[['Rozcvička','5 min veslo, aktivace hýždí'],['Dřep s osou','4×5',1],['A1 · Rumunský mrtvý tah','3×8',1],['A2 · Výpady bez zátěže (superset s A1)','3×8 / strana'],['Leg curl (hamstringy)','3×12',1],['Lýtka','3×12',1],['#Trup'],['Dead bug','3×10'],['Boční plank','3×30 s'],['Woodchop na kladce','3×10 / strana',1],['#Finisher'],['Dřep a hod medicimbalu do výšky','3×8 (lehčí míč)',1]],
 C:['Okruh 4–5 kol, tempo místo těžkých vah:','500 m veslo','15 kliků','10× dřep a hod medicimbalu do výšky','10 goblet dřepů s medicimbalem','250 m ski erg','5 shybů','Drž tempo, ne maximum – v pondělí jde horní polovina znovu']};
+GYM.Bh=GYM.B.flatMap(r=>r[0]=='Dřep s osou'?[['Hex rack deadlift (s popruhy)','4×5',1]]:r[0].startsWith('A1')?[]:r[0].startsWith('A2')?[['Výpady bez zátěže','3×8 / strana']]:[r]);
 const gs={A:['Posilovna A','Horní polovina + trup'],B:['Posilovna B','Nohy + trup'],C:['Posilovna C','Hyrox okruh']};
 function txt(g){const t=g[0];
 return t=='w'?`Rozjetí ${fm(g[1])}: ${pc(g[2])}→${pc(g[3])} % FTP (${W(g[2])}→${W(g[3])} W)`
@@ -93,7 +101,7 @@ function day(w,d){const L=w==6;
 if(d==3)return{k:'rest',t:'Volno',s:'Regenerace',st:['Žádný plánovaný trénink','Lehká mobilita 10–15 min, spánek, jídlo'],tss:0};
 if(L&&d==6)return{k:'eval',t:'Vyhodnocení bloku',s:'Co dál?',tss:0,st:['Zapiš výsledek FTP testu a nastav FTP nahoře na stránce','Porovnej váhy v posilovně (tlak, shyby, dřep) s prvním týdnem','Zhodnoť únavu, spánek a bolesti – co upravit','Rozhodni délku dalšího bloku (4–6 týdnů) a priority (VO2 / sweet spot / síla)','Watty ve všech trénincích se po změně FTP přepočítají samy']};
 if([0,4,6].includes(d)){const k={0:'A',4:'B',6:'C'}[d],g=gs[k];
-return{k:'gym',tss:Math.round({A:40,B:50,C:45}[k]*(L?.7:1)),t:g[0],s:g[1],st:(L?['Odlehčený týden: o třetinu méně sérií, rezerva 2–3 opakování']:[]).concat(GYM[k])}}
+return{k:'gym',tss:Math.round({A:40,B:50,C:45}[k]*(L?.7:1)),t:g[0],s:g[1],st:(L?['Odlehčený týden: o třetinu méně sérií, rezerva 2–3 opakování']:[]).concat(k=='C'?GYM.C:[]),rows:k=='C'?null:k=='B'&&w%2?GYM.Bh:GYM[k]}}
 let seg,t,s,k='bike';
 if(d==1){if(L){seg=[['w',600,.45,.75],['i',3,60,180,1.1,.55],['c',600,.55,.4]];t='Otevírací intervaly';s='3× 1 min @ 110 %'}
 else{const[a,p]=VO[w];seg=[['w',600,.45,.75]];for(let i=0;i<a;i++){if(i)seg.push(['s',300,.5]);seg.push(['i',10,40,20,p/100,.55])}seg.push(['c',600,.55,.4]);t='VO2 · 40/20';s=`${a}× (10× 40/20) @ ${p} %`}}
@@ -115,7 +123,7 @@ function zwo(x){const e=x.seg.map(g=>{const t=g[0];return t=='w'?`<Warmup Durati
 return`<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>Zimni priprava</author>\n  <name>${x.t}</name>\n  <description>${x.s}</description>\n  <sportType>bike</sportType>\n  <tags/>\n  <workout>\n    ${e}\n  </workout>\n</workout_file>`}
 function dl(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click()}
 function open(w,d){const x=day(w,d),id=w+'-'+d,r=x.k=='rest';
-$('#mb').innerHTML=`<h2>${x.t}</h2><p class="m">${DN[d]} ${fd(dateOf(w,d))} · týden ${w+1}${x.dur?' · ≈ '+x.dur+' min':''}</p><ul>${x.st.map(i=>`<li>${i}</li>`).join('')}</ul>${r?'':`<textarea id="nt" placeholder="Poznámky: pocity, skutečné watty, tep…">${esc(S.notes[id]||'')}</textarea>`}<div class="bt">${x.seg?'<button id="zw">Export .zwo (MyWhoosh)</button>':''}${r?'':`<button class="p" id="dn">${S.done[id]?'Vrátit na nedokončené':'Hotovo'}</button>`}</div>`;
+$('#mb').innerHTML=`<h2>${x.t}</h2><p class="m">${DN[d]} ${fd(dateOf(w,d))} · týden ${w+1}${x.dur?' · ≈ '+x.dur+' min':''}</p>${x.st.length?`<ul>${x.st.map(i=>`<li>${i}</li>`).join('')}</ul>`:''}${x.rows?tbl(x.rows):''}${r?'':`<textarea id="nt" placeholder="Poznámky: pocity, skutečné watty, tep…">${esc(S.notes[id]||'')}</textarea>`}<div class="bt">${x.seg?'<button id="zw">Export .zwo (MyWhoosh)</button>':''}${r?'':`<button class="p" id="dn">${S.done[id]?'Vrátit na nedokončené':'Hotovo'}</button>`}</div>`;
 const nt=$('#nt');if(nt)nt.oninput=()=>{S.notes[id]=nt.value;save()};
 if($('#zw'))$('#zw').onclick=()=>dl(`tyden${w+1}-${DN[d]}.zwo`,zwo(x),'application/xml');
 if($('#dn'))$('#dn').onclick=()=>{S.done[id]=!S.done[id];if(!S.done[id])delete S.done[id];save();render();$('#m').close()};
@@ -131,7 +139,7 @@ $('#ftp').onchange=e=>{S.ftp=Math.max(100,+e.target.value||250);save();render()}
 $('#st').onchange=e=>{if(e.target.value){S.start=e.target.value;save();render()}};
 $('#bk').onclick=()=>dl('plan-zaloha.json',JSON.stringify(S),'application/json');
 $('#rs').onclick=()=>$('#fl').click();
-$('#fl').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(S,JSON.parse(t));save();$('#ftp').value=S.ftp;$('#st').value=S.start;render()}catch(x){alert('Soubor se nepodařilo načíst.')}})};
+$('#fl').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(S,JSON.parse(t));save();$('#ftp').value=S.ftp;$('#st').value=S.start;$('#c0').value=S.c0;buildW();render()}catch(x){alert('Soubor se nepodařilo načíst.')}})};
 
 function chF(P){const W=600,H=220,L=38,R=14,T=14,B=26,n=P.length,mn=Math.floor(Math.min(...P.map(p=>p[1]))-3),mx=Math.ceil(Math.max(...P.map(p=>p[2]))+3);
 const sx=i=>L+(W-L-R)*i/(n-1),sy=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));let g='';
@@ -148,6 +156,13 @@ if(mn<0)g+=`<line x1="${L}" x2="${W-R}" y1="${sy(0)}" y2="${sy(0)}" stroke="var(
 for(let w=0;w<7;w++)g+=`<text class="ax" x="${sx(w*7+3)}" y="${H-8}" text-anchor="middle">T${w+1}</text>`;
 const tx=tI>=0&&tI<N?`<line x1="${sx(tI)}" x2="${sx(tI)}" y1="${T}" y2="${H-B}" stroke="var(--m)" stroke-dasharray="2 3"/>`:'';
 return`<svg viewBox="0 0 ${W} ${H}" width="100%">${g}${tx}<polygon points="${pts('c',0,N-1)}${sx(N-1)},${sy(mn)} ${sx(0)},${sy(mn)}" fill="#0a84ff" opacity=".12"/>${ln('c','#0a84ff')}${ln('a','#ff2d92')}${ln('f','#ff9f0a')}</svg>`}
+
+const ea=v=>esc(String(v)).replace(/"/g,'&quot;');
+const wi=n=>`<input type="number" inputmode="decimal" step="0.5" min="0" data-k="${ea(n)}" value="${ea(S.w[n]??'')}" placeholder="kg">`;
+function tbl(R){return`<table class="gt"><tr><th>Cvik</th><th>Série × opak.</th><th>Kg</th></tr>`+R.map(r=>r[0][0]=='#'?`<tr class="sec"><td colspan="3">${r[0].slice(1)}</td></tr>`:`<tr><td>${r[0]}</td><td>${r[1]||''}</td><td>${r[2]?wi(r[0]):''}</td></tr>`).join('')+'</table>'}
+function buildW(){$('#wp').innerHTML='<h3>Pracovní váhy (kg)</h3>'+['A','B'].map(k=>`<h4>Posilovna ${k}</h4><div class="wg">`+(k=='B'?GYM.B.concat(GYM.Bh.filter(r=>r[2]&&!GYM.B.some(q=>q[0]==r[0]))):GYM[k]).filter(r=>r[2]).map(r=>`<label>${r[0]}${wi(r[0])}</label>`).join('')+'</div>').join('')+'<p class="m">Váhy se propíšou do všech tréninků Posilovna A a B.</p>'}
+function setW(e){const k=e.target.dataset&&e.target.dataset.k;if(k==null)return;S.w[k]=e.target.value;save();document.querySelectorAll('input[data-k]').forEach(i=>{if(i!==e.target&&i.dataset.k===k)i.value=e.target.value})}
+$('#wp').addEventListener('input',setW);$('#mb').addEventListener('input',setW);
 function charts(){const now=new Date();now.setHours(0,0,0,0);
 const gn=[1,1,.9,.8,.7,.5,.3];let c=S.ftp,lo=S.ftp,hi=S.ftp;const P=[[c,lo,hi]];
 for(let w=0;w<7;w++){let f=1;if(dateOf(w,6)<now){let n=0,b=0;for(let d=0;d<7;d++)if(day(w,d).seg){b++;if(S.done[w+'-'+d])n++}f=b?n/b:1}
@@ -157,5 +172,5 @@ for(let i=0;i<49;i++){const w=Math.floor(i/7),d=i%7,x=day(w,d),tl=(i>tI||S.done[
 const u=D[Math.max(0,Math.min(tI,48))],e=P[7];
 $('#ch').innerHTML=`<div class="card"><h3>Predikce FTP</h3>${chF(P)}<p class="m">Po 7. týdnu odhad ~${Math.round(e[0])} W (rozptyl ${Math.round(e[1])}–${Math.round(e[2])} W) z FTP ${S.ftp} W. Orientační model: přírůstek klesá s časem a u uplynulých týdnů se násobí podílem splněných jízd na kole. Skutečnost ověří test v 7. týdnu.</p></div>
 <div class="card"><h3>Fitness a únava</h3>${chT(D,tI)}<div class="lg"><span><i style="background:#0a84ff"></i>Fitness ${Math.round(u.c)}</span><span><i style="background:#ff2d92"></i>Únava ${Math.round(u.a)}</span><span><i style="background:#ff9f0a"></i>Forma ${Math.round(u.f)}</span></div><p class="m">Plná čára = odškrtnuté tréninky, přerušovaná = plán. Zátěž (TSS) se počítá z plánu, nedokončený trénink se bere jako 0. Fitness startuje na ${S.c0}.</p></div>`}
-render();const td=document.querySelector('.today');if(td)td.scrollIntoView({block:'center'});
+buildW();render();const td=document.querySelector('.today');if(td)td.scrollIntoView({block:'center'});
 </script></body></html>
